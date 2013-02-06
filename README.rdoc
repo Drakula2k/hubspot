@@ -43,6 +43,24 @@ can be added to your application.rb or an initializer:
 
 Currently, the gem supports the following Hubspot API's:
 
+=== Contacts
+
+See: http://developers.hubspot.com/docs/endpoints#contacts-api
+
+==== Finds
+
+  Hubspot::Contact.find_by_email('example@email.com')
+
+==== Creates
+
+  Hubspot::Contact.create({})
+  Hubspot::Contact.create!({})
+
+==== Updates
+
+  contact.firstName = 'Reinier'; contact.save!
+  contact.update_attributes(:first_name => 'Reinier')
+
 === Leads
 
 See: http://developers.hubspot.com/docs/endpoints#leads-api
