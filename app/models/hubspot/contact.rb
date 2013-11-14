@@ -2,6 +2,8 @@ module Hubspot
 
   # Finds and updates contacts
   #
+  # NOTE: only .properties_for_conversion, #find_by_email and #recent methods are tested
+  #
   # Finds:
   # Hubspot::Contact.find :all, :params => { :search => 'test' }
   # Hubspot::Contact.find <GUID>
