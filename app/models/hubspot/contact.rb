@@ -149,9 +149,13 @@ module Hubspot
       end
 
       def parse_contacts_body(body)
-        contacts = format.decode(body)["contacts"]
+        parsed = format.decode(body)
+
+        contacts = parsed["contacts"]
         contacts.map! { |contact| camelize_keys_recursive(contact)}
         instantiate_collection(contacts)
+
+        parsed.merge("contacts" => contacts)
       end
 
       def parse_contact_body(body)

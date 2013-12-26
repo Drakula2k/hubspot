@@ -45,7 +45,13 @@ class ContactTest < ActiveSupport::TestCase
 
   def test_should_return_recent_contacts
     VCR.use_cassette('contacts-list') do
-      contacts = Hubspot::Contact.recent({})
+      recent = Hubspot::Contact.recent({})
+
+      assert_equal recent["has-more"], true
+      assert_equal recent["vid-offset"], 191225
+      assert_equal recent["time-offset"], 1384336886530
+
+      contacts = recent["contacts"]
       assert_equal contacts.count, 20
 
       assert_equal contacts.first.formSubmissions.count, 1, "formSubmissions"
