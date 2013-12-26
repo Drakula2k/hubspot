@@ -1,6 +1,27 @@
 require File.expand_path('../../test_helper.rb', __FILE__)
 
 class ContactTest < ActiveSupport::TestCase
+  def test_should_return_contact_by_id
+    VCR.use_cassette('contact-find-by-id') do
+      contact = Hubspot::Contact.find(190843)
+      assert_not_nil contact
+
+      assert_equal contact.vid, 190843
+      assert_equal contact.canonicalVid, 190843
+      assert_equal contact.profileUrl, "https://app.hubspot.com/contacts/62515/lists/public/contact/_AO_T-mMpAAQXzICmmWD7T0hP6btnFglUHed6-2gJVFo61AbQwSWxbyP1sLNHUcMIVWlY7ITFNyEoYG_5_BKblAGHDhUqCCVj4ELIWDkx6iwvwo2SJvpif3pvxttILC5m4TDJccGfEYVb/"
+      assert_equal contact.properties.attributes.count, 38
+      assert_equal contact.properties.hsAnalyticsFirstUrl.versions.first.sourceType, "ANALYTICS"
+      contact.properties.attributes.each { |name, prop| assert_operator prop.versions.count, :>, 0 }
+
+      props = contact.properties_for_conversion(contact.formSubmissions.first.conversionId)
+      props.each do |name, prop|
+        assert_equal prop.sourceId, contact.formSubmissions.first.conversionId
+        assert_equal prop.sourceType, "FORM"
+        assert !prop.value.nil?, "value"
+      end
+    end
+  end
+
   def test_should_return_contact_by_email
     VCR.use_cassette('contact-find') do
       contact = Hubspot::Contact.find_by_email('test2@unbounce.com')
@@ -12,12 +33,6 @@ class ContactTest < ActiveSupport::TestCase
       assert_equal contact.properties.attributes.count, 40
       assert_equal contact.properties.hsAnalyticsFirstUrl.versions.first.sourceType, "ANALYTICS"
       contact.properties.attributes.each { |name, prop| assert_operator prop.versions.count, :>, 0 }
-    end
-  end
-
-  def test_should_return_properties_for_conversion
-    VCR.use_cassette('contact-find') do
-      contact = Hubspot::Contact.find_by_email('test2@unbounce.com')
 
       props = contact.properties_for_conversion(contact.formSubmissions.first.conversionId)
       props.each do |name, prop|

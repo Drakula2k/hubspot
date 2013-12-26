@@ -84,6 +84,10 @@ module Hubspot
         update!(vid, attributes) rescue false
       end
 
+      def find(vid)
+        find!(vid) rescue false
+      end
+
       def find_by_email(email)
         find_by_email!(email) rescue false
       end
@@ -103,6 +107,12 @@ module Hubspot
           }
         )
         response.code == '204'
+      end
+
+      def find!(vid)
+        url = "#{ self.site }vid/#{vid}/profile"
+        response = Hubspot::Contact.connection.get(url)
+        parse_contact_body(response.body)
       end
 
       def find_by_email!(email)
