@@ -192,6 +192,8 @@ module Hubspot
         identities.each do |id|
           return id.value if id.type == "EMAIL"
         end
+
+        return
       end
     end
 
